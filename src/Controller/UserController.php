@@ -2,22 +2,39 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\View\View;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * Class UserController
+ * @package App\Controller
+ * @Rest\Route("/user")
+ */
 class UserController extends AbstractController
 {
     /**
-     * @Rest\Get("/user", name="user")
+     * @var EntityManagerInterface
      */
-    public function index()
-    {
-        $user = new User();
-        $user->setEmail("thibault.barolatmassole@gmail.com");
+    private $manager;
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
 
-        $view = new View($user);
-        return $view;
+    public function __construct(EntityManagerInterface $manager, UserRepository $userRepository)
+    {
+        $this->manager = $manager;
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * @Rest\Get()
+     * @Rest\View()
+     */
+    public function getAll()
+    {
+        return $this->userRepository->findAll();
     }
 }
